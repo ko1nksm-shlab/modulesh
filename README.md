@@ -42,7 +42,7 @@ namesapceA_moduleA1() {
 }
 
 # Real name of function to export
-namesapceA_moduleA1_hello() {
+_namesapceA_moduleA1_hello() {
   var1='this is local variable'
   var2='this is not local variable'
 

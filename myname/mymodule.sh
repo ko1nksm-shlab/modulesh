@@ -8,25 +8,25 @@ myname_mymodule() {
   EXPORT hello
 }
 
-myname_mymodule_foo() {
+_myname_mymodule_foo() {
   echo ok: foo $#
 }
 
-myname_mymodule_bar() {
+_myname_mymodule_bar() {
   echo ok: bar $#
 }
 
-myname_mymodule_baz() {
+_myname_mymodule_baz() {
   echo ok: baz $#
 }
 
-myname_mymodule_change_var() {
+_myname_mymodule_change_var() {
   local_var=1
   global_var=1
 
   echo "local: $local_var, global: $global_var"
 }
 
-myname_mymodule_hello() {
+_myname_mymodule_hello() {
   echo "hello $*"
 }

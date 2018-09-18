@@ -10,17 +10,17 @@ if _PROXY 2>/dev/null; then
   eval '_PROXY() {
     local func=${1%:*} to=${1#*:} local=""; shift
     [ $# -gt 0 ] && local="local $@; "
-    eval "$func() { $local if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
+    eval "$func() { $local if [ \$# -gt 0 ]; then _$to \"\$@\"; else _$to; fi; }"
   }'
 else
   eval 'function _PROXY {
     typeset func=${1%:*} to=${1#*:} local=""; shift
     [ $# -gt 0 ] && local="typeset $@; "
-    eval "function $func { $local $to \"\$@\"; }"
+    eval "function $func { $local _$to \"\$@\"; }"
   }'
 fi
 
-_PROXY IMPORT:_IMPORT \
+_PROXY IMPORT \
   IFS module modname prefix exports export funcs func alias defname chunk
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
