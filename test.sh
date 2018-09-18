@@ -33,7 +33,7 @@ exit
 
 run_tests() {
   # shellcheck disable=SC2009
-  printf 'Run: %s\n' "$(ps -o pid,args= | grep ^$$ | cut -d' ' -f 2-)"
+  printf 'Run: %s\n' "$(ps -o pid,args= | sed -nE "/^ *$$/p")"
   # shellcheck disable=SC1090
   . "$SH_MODULE_DIR/module.sh"
   for test in $(tests); do
