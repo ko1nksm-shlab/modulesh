@@ -69,7 +69,7 @@ else
   ng() { eval echo -n '!'; ERROR=1; }
 fi
 
-test() {
+t() {
   if "$@"; then
     ok
   else
@@ -79,73 +79,73 @@ test() {
 # Imports all functions from module with default prefix
 test_import_all_with_default_prefix() {
   IMPORT myname/mymodule
-  test [ "$(mymodule_foo)" = "ok: foo 0" ]
-  test [ "$(mymodule_bar)" = "ok: bar 0" ]
-  test [ "$(mymodule_baz)" = "ok: baz 0" ]
+  t [ "$(mymodule_foo)" = "ok: foo 0" ]
+  t [ "$(mymodule_bar)" = "ok: bar 0" ]
+  t [ "$(mymodule_baz)" = "ok: baz 0" ]
 }
 
 # Imports all functions from module without prefix
 test_import_all_without_prefix() {
   IMPORT myname/mymodule:
-  test [ "$(foo)" = "ok: foo 0" ]
-  test [ "$(bar)" = "ok: bar 0" ]
-  test [ "$(baz)" = "ok: baz 0" ]
+  t [ "$(foo)" = "ok: foo 0" ]
+  t [ "$(bar)" = "ok: bar 0" ]
+  t [ "$(baz)" = "ok: baz 0" ]
 }
 
 # Imports all functions from module with prefix
 test_import_all_with_prefix() {
   IMPORT myname/mymodule:sh
-  test [ "$(sh_foo)" = "ok: foo 0" ]
-  test [ "$(sh_bar)" = "ok: bar 0" ]
-  test [ "$(sh_baz)" = "ok: baz 0" ]
+  t [ "$(sh_foo)" = "ok: foo 0" ]
+  t [ "$(sh_bar)" = "ok: bar 0" ]
+  t [ "$(sh_baz)" = "ok: baz 0" ]
 }
 
 # Imports specified functions from module with default prefix
 test_import_default_prefix() {
   IMPORT myname/mymodule foo
-  test [ "$(mymodule_foo)" = "ok: foo 0" ]
-  test not exist_function mymodule_bar
-  test not exist_function mymodule_baz
+  t [ "$(mymodule_foo)" = "ok: foo 0" ]
+  t not exist_function mymodule_bar
+  t not exist_function mymodule_baz
 }
 
 
 # Imports specified functions from module without prefix
 test_import_without_prefix() {
   IMPORT myname/mymodule: foo
-  test [ "$(foo)" = "ok: foo 0" ]
-  test not exist_function mymodule_bar
-  test not exist_function mymodule_baz
-  test not exist_function bar
-  test not exist_function baz
+  t [ "$(foo)" = "ok: foo 0" ]
+  t not exist_function mymodule_bar
+  t not exist_function mymodule_baz
+  t not exist_function bar
+  t not exist_function baz
 }
 
 # Imports specified functions from module with prefix
 test_import_with_prefix() {
   IMPORT myname/mymodule:sh foo
-  test [ "$(sh_foo)" = "ok: foo 0" ]
-  test not exist_function mymodule_bar
-  test not exist_function mymodule_baz
-  test not exist_function sh_bar
-  test not exist_function sh_baz
+  t [ "$(sh_foo)" = "ok: foo 0" ]
+  t not exist_function mymodule_bar
+  t not exist_function mymodule_baz
+  t not exist_function sh_bar
+  t not exist_function sh_baz
 }
 
 # Imports specified functions from module with alias
 test_import_with_alias() {
   IMPORT myname/mymodule:sh foo bar:my_bar baz:baz
-  test [ "$(sh_foo)" = "ok: foo 0" ]
-  test not exist_function mymodule_foo
-  test [ "$(my_bar)" = "ok: bar 0" ]
-  test not exist_function sh_bar
-  test [ "$(baz)" = "ok: baz 0" ]
-  test not exist_function sh_baz
+  t [ "$(sh_foo)" = "ok: foo 0" ]
+  t not exist_function mymodule_foo
+  t [ "$(my_bar)" = "ok: bar 0" ]
+  t not exist_function sh_bar
+  t [ "$(baz)" = "ok: baz 0" ]
+  t not exist_function sh_baz
 }
 
 test_change_var() {
   IMPORT myname/mymodule
   local_var='' global_var=''
   mymodule_change_var >/dev/null
-  test [ "$local_var" = "" ]
-  test [ "$global_var" = "1" ]
+  t [ "$local_var" = "" ]
+  t [ "$global_var" = "1" ]
 }
 
 main "$@"
