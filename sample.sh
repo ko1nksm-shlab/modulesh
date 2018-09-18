@@ -9,25 +9,25 @@ SH_MODULE_DIR=${0%%/*}
 
 (
   IMPORT myname/mymodule
-  mymodule_hello "module 1"
+  mymodule_hello "mymodule_hello"
 )
 
 (
   IMPORT myname/mymodule:
-  hello "module 2"
+  hello "hello"
 )
 
 (
   IMPORT myname/mymodule:my
-  my_hello "module 3"
+  my_hello "my_hello"
 )
 
 (
   IMPORT myname/mymodule:my hello
-  my_hello "module 4"
+  my_hello "my_hello:2"
 )
 
 (
   IMPORT myname/mymodule hello:Hello
-  Hello "module 5"
+  Hello "Hello"
 )
