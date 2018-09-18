@@ -22,6 +22,7 @@ fi
 
 _PROXY IMPORT \
   IFS module modname prefix exports export funcs func alias defname chunk
+_PROXY DEPENDS prefix chunk
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
@@ -97,4 +98,16 @@ _IMPORT() {
 EXPORT() {
   IFS=':'
   eval "$modname=\"\${$modname:-} $*\""
+}
+
+# Usage: DEPENDS <module>...
+_DEPENDS() {
+  while [ $# -gt 0 ]; do
+    chunk="$1/" prefix=''
+    while [ "$chunk" ]; do
+      prefix=${prefix}${prefix:+_}${chunk%%/*} chunk=${chunk#*/}
+    done
+    IMPORT "$1:$prefix"
+    shift
+  done
 }

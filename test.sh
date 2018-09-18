@@ -148,4 +148,9 @@ test_change_var() {
   t [ "$global_var" = "1" ]
 }
 
+test_using_other_module() {
+  IMPORT myname/using_other_module
+  t [ "$(using_other_module_hello "using_other_module")" = "hello using_other_module" ]
+}
+
 main "$@"
