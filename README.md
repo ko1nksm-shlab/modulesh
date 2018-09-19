@@ -40,7 +40,7 @@ namesapceA_moduleA1() {
   # export hello function and localize var1
   EXPORT hello var1
 
-  # Using other module
+  # Using other module (Do not use IMPORT in module)
   DEPENDS namespaceB/moduleB1
 }
 
@@ -77,7 +77,7 @@ namespace/module exports three functions, foo(), bar() and baz().
 `IMPORT namespace/module`
 
   * Imports all functions from module with default prefix
-  * module_foo(), module_bar(), module_baz() functions are defined.
+  * namespace_module_foo(), namespace_module_bar(), namespace_module_baz() functions are defined.
 
 `IMPORT namespace/module:`
 
@@ -92,7 +92,7 @@ namespace/module exports three functions, foo(), bar() and baz().
 `IMPORT namespace/module foo`
 
   * Imports specified functions from module with default prefix
-  * module_foo() function is defined.
+  * namespace_module_foo() function is defined.
 
 `IMPORT namespace/module: foo`
 
@@ -104,10 +104,10 @@ namespace/module exports three functions, foo(), bar() and baz().
   * Imports specified functions from module with prefix
   * sh_foo() function is defined.
 
-`IMPORT ko1nksm/sample:sh foo bar:my_bar baz:baz`
+`IMPORT namespace/sample:sh foo bar:my_bar baz:baz`
 
   * Imports specified functions from module with alias
-  * sh_foo(), my_bar(), baz() functions are defined.
+  * sh_foo(), my_bar(), namespace_baz() functions are defined.
 
 ### EXPORT
 
