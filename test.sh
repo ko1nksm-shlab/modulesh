@@ -158,4 +158,9 @@ test_myname_sub_foo() {
   t [ "$(foo_hello)" = "sub foo" ]
 }
 
+test_myname_module_info() {
+  IMPORT myname/mymodule
+  t [ "$(mymodule_module_info)" = "./myname/mymodule.sh myname_mymodule" ]
+}
+
 main "$@"

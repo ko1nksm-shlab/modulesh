@@ -132,4 +132,5 @@ Using other module function.
 ### 2018-09-19 0.2.0
 
   * Add DEPENDS function
+  * Add MODULE_SOURCE MODULE_NAME
   * Fix nested namespace

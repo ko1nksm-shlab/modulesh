@@ -6,6 +6,7 @@ myname_mymodule() {
   EXPORT baz
   EXPORT change_var local_var
   EXPORT hello
+  EXPORT module_info
 }
 
 _myname_mymodule_foo() {
@@ -29,4 +30,8 @@ _myname_mymodule_change_var() {
 
 _myname_mymodule_hello() {
   echo "hello $*"
+}
+
+_myname_mymodule_module_info() {
+  echo "$MODULE_SOURCE $MODULE_NAME"
 }

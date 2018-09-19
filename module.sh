@@ -8,21 +8,31 @@ _PROXY(){ local _; }
 if _PROXY 2>/dev/null; then
   # checking $# in $func() to avoid https://bugs.debian.org/861743
   eval '_PROXY() {
-    local func=${1%:*} to=${1#*:} local="local IFS"; shift
-    while [ $# -gt 0 ]; do local="$local $1="; shift; done
+    local func=${1%:*} to=${1#*:} local="local IFS" i; shift
+    for i in "$@"; do
+      case $i in
+        *=*) local="$local ${i%%=*}=\"${i#*=}\"" ;;
+        *) local="$local $i=\"\"" ;;
+      esac
+    done
     [ "$func" = "$to" ] && to=_$to
     eval "$func() { $local; if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
   }'
 else
   eval 'function _PROXY {
-    typeset func=${1%:*} to=${1#*:} local="typeset IFS"; shift
-    while [ $# -gt 0 ]; do local="$local $1="; shift; done
+    typeset func=${1%:*} to=${1#*:} local="typeset IFS" i; shift
+    for i in "$@"; do
+      case $i in
+        *=*) local="$local ${i%%=*}=\"${i#*=}\"" ;;
+        *) local="$local $i=\"\"" ;;
+      esac
+    done
     [ "$func" = "$to" ] && to=_$to
     eval "function $func { $local; $to \"\$@\"; }"
   }'
 fi
 
-_PROXY IMPORT module modname prefix exports func alias defname chunk
+_PROXY IMPORT module modname prefix exports func alias defname chunk path MODULE_SOURCE MODULE_NAME
 _PROXY DEPENDS prefix chunk
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
@@ -59,9 +69,9 @@ _IMPORT() {
       echo "ERROR: Module '$module' not found" >&2
       exit 1
     fi
+    MODULE_SOURCE="$path/$module.sh" MODULE_NAME="$modname"
     # shellcheck disable=SC1090
-    . "$path/$module.sh"
-    $modname
+    . "$MODULE_SOURCE" && $MODULE_NAME
   fi
 
   eval "exports=\$${modname}"
@@ -84,8 +94,9 @@ _IMPORT() {
 
 # Usage: EXPORT <func> [<variable-modnames>...]
 EXPORT() {
-  eval "$modname=\"\${$modname:-} $1\""
-  eval "_PROXY ${modname}_$*"
+  eval "$MODULE_NAME=\"\${$MODULE_NAME:-} $1\""
+  # shellcheck disable=SC2145
+  _PROXY "${MODULE_NAME}_$@" MODULE_SOURCE="$MODULE_SOURCE" MODULE_NAME="$MODULE_NAME"
 }
 
 # Usage: DEPENDS <module>...
