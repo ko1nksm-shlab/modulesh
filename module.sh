@@ -21,7 +21,7 @@ _PROXY(){
 _PROXY '' '()' local 2>/dev/null || _PROXY 'function ' '' typeset
 
 _PROXY IMPORT module modname prefix exports func alias defname chunk path MODULE_SOURCE MODULE_NAME
-_PROXY DEPENDS prefix chunk
+_PROXY DEPENDS prefix chunk i
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
@@ -89,12 +89,11 @@ EXPORT() {
 
 # Usage: DEPENDS <module>...
 _DEPENDS() {
-  while [ $# -gt 0 ]; do
-    chunk="$1/" prefix=''
+  for i in "$@"; do
+    chunk="$i/" prefix=''
     while [ "$chunk" ]; do
       prefix=${prefix}${prefix:+_}${chunk%%/*} chunk=${chunk#*/}
     done
-    IMPORT "$1:$prefix"
-    shift
+    IMPORT "$i:$prefix"
   done
 }
