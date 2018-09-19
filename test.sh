@@ -153,4 +153,9 @@ test_using_other_module() {
   t [ "$(using_other_module_hello "using_other_module")" = "hello using_other_module" ]
 }
 
+test_myname_sub_foo() {
+  IMPORT myname/sub/foo
+  t [ "$(foo_hello)" = "sub foo" ]
+}
+
 main "$@"

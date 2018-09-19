@@ -27,7 +27,7 @@ _PROXY DEPENDS prefix chunk
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
   path='' module=${1%%:*} prefix=${1#*:}
-  case ${module%/*} in *[!a-zA-Z0-9]*)
+  case ${module%/*} in *[!a-zA-Z0-9/]*)
     echo "ERROR: Namespace allows only character [a-zA-Z0-9] in $path" >&2
     exit 1
   esac
@@ -36,7 +36,7 @@ _IMPORT() {
     exit 1
   esac
 
-  [ "$module" = "$prefix" ] && prefix=${module#*/}
+  [ "$module" = "$prefix" ] && prefix=${module##*/}
   shift
 
   chunk="$module/" modname=''
@@ -79,7 +79,6 @@ _IMPORT() {
       *) alias=''
     esac
     [ "$alias" ] && defmodname=$alias || defmodname=${prefix}${prefix:+_}$func
-
     export="${exports#* $func}"
     if [ "$exports" = "$export" ]; then
       echo "ERROR: '$func' is not exported at $module." >&2

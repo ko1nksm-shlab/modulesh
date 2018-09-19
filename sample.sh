@@ -31,3 +31,8 @@ SH_MODULE_DIR=${0%%/*}
   IMPORT myname/mymodule hello:Hello
   Hello "Hello"
 )
+
+(
+  IMPORT myname/sub/foo
+  foo_hello "Hello"
+)
