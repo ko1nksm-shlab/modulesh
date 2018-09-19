@@ -9,26 +9,25 @@ if _PROXY 2>/dev/null; then
   # checking $# in $func() to avoid https://bugs.debian.org/861743
   eval '_PROXY() {
     local func=${1%:*} to=${1#*:} local=""; shift
-    [ $# -gt 0 ] && local="local $@; "
-    eval "$func() { $local if [ \$# -gt 0 ]; then _$to \"\$@\"; else _$to; fi; }"
+    [ $# -gt 0 ] && local="local $@; "; [ "$func" = "$to" ] && to=_$to
+    eval "$func() { $local if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
   }'
 else
   eval 'function _PROXY {
     typeset func=${1%:*} to=${1#*:} local=""; shift
-    [ $# -gt 0 ] && local="typeset $@; "
-    eval "function $func { $local _$to \"\$@\"; }"
+    [ $# -gt 0 ] && local="typeset $@; "; [ "$func" = "$to" ] && to=_$to
+    eval "function $func { $local $to \"\$@\"; }"
   }'
 fi
 
-_PROXY IMPORT \
-  IFS module modname prefix exports export funcs func alias defname chunk
+_PROXY IMPORT IFS module modname prefix exports func alias defname chunk
 _PROXY DEPENDS prefix chunk
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
-  path='' module=${1%%:*} prefix=${1#*:}
+  path='' module=${1%%:*} prefix=${1#*:} IFS=' ' exports=''
   case ${module%/*} in *[!a-zA-Z0-9/]*)
-    echo "ERROR: Namespace allows only character [a-zA-Z0-9] in $path" >&2
+    echo "ERROR: Namespace allows only character [a-zA-Z0-9/] in $path" >&2
     exit 1
   esac
   case ${module##*/} in *[!a-zA-Z0-9_]*)
@@ -63,15 +62,8 @@ _IMPORT() {
     $modname
   fi
 
-  IFS=' ' exports=''
-  eval "exports=\$$modname"
-  if [ $# -eq 0 ]; then
-    eval "set -- $exports"
-    for func in "$@"; do
-      funcs="${funcs:-} ${func%%:*}"
-    done
-    eval "set -- $funcs"
-  fi
+  eval "exports=\$${modname}"
+  [ $# -eq 0 ] && eval "set -- $exports"
 
   for func in "$@"; do
     case $func in
@@ -79,24 +71,19 @@ _IMPORT() {
       *) alias=''
     esac
     [ "$alias" ] && defmodname=$alias || defmodname=${prefix}${prefix:+_}$func
-    export="${exports#* $func}"
-    if [ "$exports" = "$export" ]; then
+    if [ "$exports" = "${exports#* $func}" ]; then
       echo "ERROR: '$func' is not exported at $module." >&2
       exit 1
     fi
-
-    chunk="${export%% *}:" export=''
-    while [ "$chunk" ]; do
-      export="${export} ${chunk%%:*}" chunk=${chunk#*:}
-    done
-    eval "_PROXY ${defmodname}:${modname}_${func} $export"
+    [ "${defmodname}" = "${modname}_${func}" ] && continue
+    eval "${defmodname}() { ${modname}_${func} \"\$@\"; }"
   done
 }
 
 # Usage: EXPORT <func> [<variable-modnames>...]
 EXPORT() {
-  IFS=':'
-  eval "$modname=\"\${$modname:-} $*\""
+  eval "$modname=\"\${$modname:-} $1\""
+  eval "_PROXY ${modname}_$*"
 }
 
 # Usage: DEPENDS <module>...
