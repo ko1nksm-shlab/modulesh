@@ -134,3 +134,7 @@ Using other module function.
   * Add DEPENDS function
   * Add MODULE_SOURCE MODULE_NAME
   * Fix several bugs.
+
+### 2018-09-20 0.2.1
+
+  * Fix several bugs.

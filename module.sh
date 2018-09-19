@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # shellcheck disable=SC2034
-MODULESH_VERSION=0.2.0
+MODULESH_VERSION=0.2.1
 
 _PROXY(){
   $3 _ || return 1
