@@ -70,13 +70,13 @@ _IMPORT() {
       *:*) alias=${func#*:} func=${func%:*} ;;
       *) alias=''
     esac
-    [ "$alias" ] && defmodname=$alias || defmodname=${prefix}${prefix:+_}$func
+    [ "$alias" ] && defname=$alias || defname=${prefix}${prefix:+_}$func
     if [ "$exports" = "${exports#* $func}" ]; then
       echo "ERROR: '$func' is not exported at $module." >&2
       exit 1
     fi
-    [ "${defmodname}" = "${modname}_${func}" ] && continue
-    eval "${defmodname}() { ${modname}_${func} \"\$@\"; }"
+    [ "$defname" = "${modname}_${func}" ] && continue
+    eval "$defname() { ${modname}_${func} \"\$@\"; }"
   done
 }
 
