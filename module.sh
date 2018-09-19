@@ -14,7 +14,6 @@ _PROXY(){
       esac
     done
     [ "$func" = "$to" ] && to=_$to
-    # checking $# in $func() to avoid https://bugs.debian.org/861743
     eval "'"$1"'$func'"$2"' { $local; if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
   }'
 }
@@ -25,13 +24,13 @@ _PROXY DEPENDS prefix chunk i
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
-  path='' module=${1%%:*} prefix=${1#*:} IFS=' ' exports=''
+  module=${1%%:*} prefix=${1#*:} IFS=' ' exports=''
   case ${module%/*} in *[!a-zA-Z0-9/]*)
-    echo "ERROR: Namespace allows only character [a-zA-Z0-9/] in $path" >&2
+    echo "ERROR: Namespace allows only character [a-zA-Z0-9/] in ${module%/*}" >&2
     exit 1
   esac
   case ${module##*/} in *[!a-zA-Z0-9_]*)
-    echo "ERROR: Module allows only character [a-zA-Z0-9_] in $path" >&2
+    echo "ERROR: Module allows only character [a-zA-Z0-9_] in ${module##*/}" >&2
     exit 1
   esac
 
@@ -62,7 +61,7 @@ _IMPORT() {
     . "$MODULE_SOURCE" && $MODULE_NAME
   fi
 
-  eval "exports=\$${modname}"
+  eval "exports=\$$modname"
   [ $# -eq 0 ] && eval "set -- $exports"
 
   for func in "$@"; do
@@ -75,8 +74,10 @@ _IMPORT() {
       echo "ERROR: '$func' is not exported at $module." >&2
       exit 1
     fi
-    [ "$defname" = "${modname}_${func}" ] && continue
-    eval "$defname() { ${modname}_${func} \"\$@\"; }"
+    func="${modname}_${func}"
+    [ "$defname" = "$func" ] && continue
+    # checking $# in $func() to avoid https://bugs.debian.org/861743
+    eval "$defname() { if [ \$# -gt 0 ]; then $func \"\$@\"; else $func; fi; }"
   done
 }
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -eu
 
 SH_MODULE_DIR=${0%%/*}
 SELF=$0
@@ -163,4 +163,8 @@ test_myname_module_info() {
   t [ "$(mymodule_module_info)" = "./myname/mymodule.sh myname_mymodule" ]
 }
 
-main "$@"
+if [ $# -gt 0 ]; then
+  main "$@"
+else
+  main
+fi
