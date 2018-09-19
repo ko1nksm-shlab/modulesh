@@ -3,34 +3,22 @@
 # shellcheck disable=SC2034
 MODULESH_VERSION=0.1.0
 
-# shellcheck disable=SC2039
-_PROXY(){ local _; }
-if _PROXY 2>/dev/null; then
-  # checking $# in $func() to avoid https://bugs.debian.org/861743
-  eval '_PROXY() {
-    local func=${1%:*} to=${1#*:} local="local IFS" i; shift
+_PROXY(){
+  $3 _ || return 1
+  eval "$1"'_PROXY'"$2"' {
+    '"$3"' func=${1%:*} to=${1#*:} local="'"$3"' IFS" i; shift
     for i in "$@"; do
       case $i in
         *=*) local="$local ${i%%=*}=\"${i#*=}\"" ;;
-        *) local="$local $i=\"\"" ;;
+        *) local="$local $i=\"\"" ;; # Initialize value for shell compatibility.
       esac
     done
     [ "$func" = "$to" ] && to=_$to
-    eval "$func() { $local; if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
+    # checking $# in $func() to avoid https://bugs.debian.org/861743
+    eval "'"$1"'$func'"$2"' { $local; if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
   }'
-else
-  eval 'function _PROXY {
-    typeset func=${1%:*} to=${1#*:} local="typeset IFS" i; shift
-    for i in "$@"; do
-      case $i in
-        *=*) local="$local ${i%%=*}=\"${i#*=}\"" ;;
-        *) local="$local $i=\"\"" ;;
-      esac
-    done
-    [ "$func" = "$to" ] && to=_$to
-    eval "function $func { $local; $to \"\$@\"; }"
-  }'
-fi
+}
+_PROXY '' '()' local 2>/dev/null || _PROXY 'function ' '' typeset
 
 _PROXY IMPORT module modname prefix exports func alias defname chunk path MODULE_SOURCE MODULE_NAME
 _PROXY DEPENDS prefix chunk
