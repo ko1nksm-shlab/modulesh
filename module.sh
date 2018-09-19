@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # shellcheck disable=SC2034
-MODULESH_VERSION=0.1.0
+MODULESH_VERSION=0.2.0
 
 _PROXY(){
   $3 _ || return 1
@@ -48,7 +48,7 @@ _IMPORT() {
       echo 'ERROR: SH_MODULE_DIR variable not set' >&2
       exit 1
     fi
-    chunk=$SH_MODULE_DIR:
+    chunk="$SH_MODULE_DIR:"
     while [ "$chunk" ]; do
       path=${chunk%%:*} chunk=${chunk#*:}
       [ "$path" ] && [ -f "$path/$module.sh" ] && break
