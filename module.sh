@@ -8,17 +8,17 @@ _PROXY(){ local _; }
 if _PROXY 2>/dev/null; then
   # checking $# in $func() to avoid https://bugs.debian.org/861743
   eval '_PROXY() {
-    local func=${1%:*} to=${1#*:} local=""; shift
-    while [ $# -gt 0 ]; do local="${local:-local} $1="; shift; done
-    local="${local}${local:+;}"; [ "$func" = "$to" ] && to=_$to
-    eval "$func() { $local if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
+    local func=${1%:*} to=${1#*:} local="local IFS"; shift
+    while [ $# -gt 0 ]; do local="$local $1="; shift; done
+    [ "$func" = "$to" ] && to=_$to
+    eval "$func() { $local; if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
   }'
 else
   eval 'function _PROXY {
-    typeset func=${1%:*} to=${1#*:} local=""; shift
-    while [ $# -gt 0 ]; do local="${local:-typeset} $1="; shift; done
-    local="${local}${local:+;}"; [ "$func" = "$to" ] && to=_$to
-    eval "function $func { $local $to \"\$@\"; }"
+    typeset func=${1%:*} to=${1#*:} local="typeset IFS"; shift
+    while [ $# -gt 0 ]; do local="$local $1="; shift; done
+    [ "$func" = "$to" ] && to=_$to
+    eval "function $func { $local; $to \"\$@\"; }"
   }'
 fi
 

@@ -115,7 +115,7 @@ Use to export function in module initializer.
 
 `Usage: EXPORT <funcname> [variable-names...]`
 
-**The scope of specified variable-names will be local.**
+**The scope of specified variable-names and IFS will be local.**
 
 ### DEPENDS
 
