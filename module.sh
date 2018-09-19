@@ -34,7 +34,12 @@ _IMPORT() {
     exit 1
   esac
 
-  [ "$module" = "$prefix" ] && prefix=${module##*/}
+  if [ "$module" = "$prefix" ]; then
+    chunk="$module/" prefix=''
+    while [ "$chunk" ]; do
+      prefix=${prefix}${prefix:+_}${chunk%%/*} chunk=${chunk#*/}
+    done
+  fi
   shift
 
   chunk="$module/" modname=''
@@ -91,10 +96,6 @@ EXPORT() {
 # Usage: DEPENDS <module>...
 _DEPENDS() {
   for i in "$@"; do
-    chunk="$i/" prefix=''
-    while [ "$chunk" ]; do
-      prefix=${prefix}${prefix:+_}${chunk%%/*} chunk=${chunk#*/}
-    done
-    IMPORT "$i:$prefix"
+    IMPORT "$i"
   done
 }

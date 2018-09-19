@@ -9,7 +9,7 @@ SH_MODULE_DIR=${0%%/*}
 
 (
   IMPORT myname/mymodule
-  mymodule_hello "mymodule_hello"
+  myname_mymodule_hello "mymodule_hello"
 )
 
 (
@@ -34,5 +34,5 @@ SH_MODULE_DIR=${0%%/*}
 
 (
   IMPORT myname/sub/foo
-  foo_hello "Hello"
+  myname_sub_foo_hello "Hello"
 )

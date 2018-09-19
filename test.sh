@@ -79,9 +79,9 @@ t() {
 # Imports all functions from module with default prefix
 test_import_all_with_default_prefix() {
   IMPORT myname/mymodule
-  t [ "$(mymodule_foo "1 2" "3 4")" = "ok: foo 2" ]
-  t [ "$(mymodule_bar)" = "ok: bar 0" ]
-  t [ "$(mymodule_baz)" = "ok: baz 0" ]
+  t [ "$(myname_mymodule_foo "1 2" "3 4")" = "ok: foo 2" ]
+  t [ "$(myname_mymodule_bar)" = "ok: bar 0" ]
+  t [ "$(myname_mymodule_baz)" = "ok: baz 0" ]
 }
 
 # Imports all functions from module without prefix
@@ -103,7 +103,7 @@ test_import_all_with_prefix() {
 # Imports specified functions from module with default prefix
 test_import_default_prefix() {
   IMPORT myname/mymodule foo
-  t [ "$(mymodule_foo)" = "ok: foo 0" ]
+  t [ "$(myname_mymodule_foo)" = "ok: foo 0" ]
   t not exist_function mymodule_bar
   t not exist_function mymodule_baz
 }
@@ -143,24 +143,24 @@ test_import_with_alias() {
 test_change_var() {
   IMPORT myname/mymodule
   local_var='' global_var=''
-  mymodule_change_var >/dev/null
+  myname_mymodule_change_var >/dev/null
   t [ "$local_var" = "" ]
   t [ "$global_var" = "1" ]
 }
 
 test_using_other_module() {
   IMPORT myname/using_other_module
-  t [ "$(using_other_module_hello "using_other_module")" = "hello using_other_module" ]
+  t [ "$(myname_using_other_module_hello "using_other_module")" = "hello using_other_module" ]
 }
 
 test_myname_sub_foo() {
   IMPORT myname/sub/foo
-  t [ "$(foo_hello)" = "sub foo" ]
+  t [ "$(myname_sub_foo_hello)" = "sub foo" ]
 }
 
 test_myname_module_info() {
   IMPORT myname/mymodule
-  t [ "$(mymodule_module_info)" = "./myname/mymodule.sh myname_mymodule" ]
+  t [ "$(myname_mymodule_module_info)" = "./myname/mymodule.sh myname_mymodule" ]
 }
 
 if [ $# -gt 0 ]; then
