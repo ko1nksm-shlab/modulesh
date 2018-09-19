@@ -9,18 +9,20 @@ if _PROXY 2>/dev/null; then
   # checking $# in $func() to avoid https://bugs.debian.org/861743
   eval '_PROXY() {
     local func=${1%:*} to=${1#*:} local=""; shift
-    [ $# -gt 0 ] && local="local $@; "; [ "$func" = "$to" ] && to=_$to
+    while [ $# -gt 0 ]; do local="${local:-local} $1="; shift; done
+    local="${local}${local:+;}"; [ "$func" = "$to" ] && to=_$to
     eval "$func() { $local if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi; }"
   }'
 else
   eval 'function _PROXY {
     typeset func=${1%:*} to=${1#*:} local=""; shift
-    [ $# -gt 0 ] && local="typeset $@; "; [ "$func" = "$to" ] && to=_$to
+    while [ $# -gt 0 ]; do local="${local:-typeset} $1="; shift; done
+    local="${local}${local:+;}"; [ "$func" = "$to" ] && to=_$to
     eval "function $func { $local $to \"\$@\"; }"
   }'
 fi
 
-_PROXY IMPORT IFS module modname prefix exports func alias defname chunk
+_PROXY IMPORT module modname prefix exports func alias defname chunk
 _PROXY DEPENDS prefix chunk
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]

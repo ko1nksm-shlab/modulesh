@@ -79,7 +79,7 @@ t() {
 # Imports all functions from module with default prefix
 test_import_all_with_default_prefix() {
   IMPORT myname/mymodule
-  t [ "$(mymodule_foo)" = "ok: foo 0" ]
+  t [ "$(mymodule_foo "1 2" "3 4")" = "ok: foo 2" ]
   t [ "$(mymodule_bar)" = "ok: bar 0" ]
   t [ "$(mymodule_baz)" = "ok: baz 0" ]
 }
