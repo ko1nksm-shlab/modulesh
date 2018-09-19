@@ -20,11 +20,10 @@ _PROXY(){
 _PROXY '' '()' local 2>/dev/null || _PROXY 'function ' '' typeset
 
 _PROXY IMPORT module modname prefix exports func alias defname chunk path MODULE_SOURCE MODULE_NAME
-_PROXY DEPENDS prefix chunk i
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
-  module=${1%%:*} prefix=${1#*:} IFS=' ' exports=''
+  module=${1%%:*} IFS=' ' exports=''
   case ${module%/*} in *[!a-zA-Z0-9/]*)
     echo "ERROR: Namespace allows only character [a-zA-Z0-9/] in ${module%/*}" >&2
     exit 1
@@ -34,18 +33,16 @@ _IMPORT() {
     exit 1
   esac
 
-  if [ "$module" = "$prefix" ]; then
-    chunk="$module/" prefix=''
-    while [ "$chunk" ]; do
-      prefix=${prefix}${prefix:+_}${chunk%%/*} chunk=${chunk#*/}
-    done
-  fi
-  shift
-
   chunk="$module/" modname=''
   while [ "$chunk" ]; do
     modname=${modname}${modname:+_}${chunk%%/*} chunk=${chunk#*/}
   done
+
+  case $1 in
+    *:*) prefix=${1#*:} ;;
+    *) prefix=$modname
+  esac
+  shift
 
   if eval [ -z "\${$modname+x}" ]; then
     if [ -z "$SH_MODULE_DIR" ]; then
@@ -81,7 +78,7 @@ _IMPORT() {
     fi
     func="${modname}_${func}"
     [ "$defname" = "$func" ] && continue
-    # checking $# in $func() to avoid https://bugs.debian.org/861743
+    # posh: checking $# in $func() to avoid https://bugs.debian.org/861743
     eval "$defname() { if [ \$# -gt 0 ]; then $func \"\$@\"; else $func; fi; }"
   done
 }
@@ -94,8 +91,6 @@ EXPORT() {
 }
 
 # Usage: DEPENDS <module>...
-_DEPENDS() {
-  for i in "$@"; do
-    IMPORT "$i"
-  done
+DEPENDS() {
+  while [ $# -gt 0 ]; do IMPORT "$1"; shift; done
 }
