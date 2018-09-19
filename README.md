@@ -39,6 +39,9 @@ example module: `namesapceA/moduleA1.sh`
 namesapceA_moduleA1() {
   # export hello function and localize var1
   EXPORT hello var1
+
+  # Using other module
+  DEPENDS namespaceB/moduleB1
 }
 
 # Real name of function to export
@@ -48,9 +51,14 @@ _namesapceA_moduleA1_hello() {
 
   echo "hello $@"
 }
+
+_namesapceA_moduleA1_bye() {
+  # call other module function with full module name
+  namespaceB_moduleB1_bye "$@"
+}
 ```
 
-## Reference
+## References
 
 ### $SH_MODULE_DIR
 
@@ -109,8 +117,19 @@ Use to export function in module initializer.
 
 **The scope of specified variable-names will be local.**
 
+### DEPENDS
+
+Using other module function.
+
+`Usage: DEPENDS <module>...`
+
 ## Release notes
 
 ### 2018-09-18 0.1.0
 
   * First version
+
+### 2018-09-19 0.2.0
+
+  * Add DEPENDS function
+  * Fix nested namespace
