@@ -138,3 +138,7 @@ Using other module function.
 ### 2018-09-20 0.2.1
 
   * Fix several bugs.
+
+### 2018-09-20 0.3.0
+
+  * Change specification when prefix ommitted
