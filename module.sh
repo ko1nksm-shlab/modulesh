@@ -19,7 +19,7 @@ _PROXY(){
 }
 _PROXY '' '()' local 2>/dev/null || _PROXY 'function ' '' typeset
 
-_PROXY IMPORT module modname prefix exports func alias defname chunk path MODULE_SOURCE MODULE_NAME
+_PROXY IMPORT module modname prefix exports func alias defname chunk base MODULE_SOURCE MODULE_NAME
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
@@ -49,16 +49,20 @@ _IMPORT() {
       echo 'ERROR: SH_MODULE_DIR variable not set' >&2
       exit 1
     fi
-    chunk="$SH_MODULE_DIR:"
+    chunk="$SH_MODULE_DIR:" MODULE_SOURCE='' MODULE_NAME="$modname"
     while [ "$chunk" ]; do
-      path=${chunk%%:*} chunk=${chunk#*:}
-      [ "$path" ] && [ -f "$path/$module.sh" ] && break
+      base=${chunk%%:*} chunk=${chunk#*:}
+      [ "$base" ] || continue
+      if [ -f "$base/$module.sh" ]; then
+        MODULE_SOURCE="$base/$module.sh" && break
+      elif [ -f "$base/$module/${module##*/}.sh" ]; then
+        MODULE_SOURCE="$base/$module/${module##*/}.sh" && break
+      fi
     done
-    if [ -z "$path" ]; then
+    if [ -z "$MODULE_SOURCE" ]; then
       echo "ERROR: Module '$module' not found" >&2
       exit 1
     fi
-    MODULE_SOURCE="$path/$module.sh" MODULE_NAME="$modname"
     # shellcheck disable=SC1090
     . "$MODULE_SOURCE" && $MODULE_NAME
   fi
@@ -83,7 +87,7 @@ _IMPORT() {
   done
 }
 
-# Usage: EXPORT <func> [<variable-modnames>...]
+# Usage: EXPORT <func> [<variable-names>...]
 EXPORT() {
   eval "$MODULE_NAME=\"\${$MODULE_NAME:-} $1\""
   # shellcheck disable=SC2145
