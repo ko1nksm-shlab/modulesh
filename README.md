@@ -42,7 +42,7 @@ example module: `namesapceA/moduleA1.sh`
 # initializer: Invoked by module.sh to export functions
 namesapceA_moduleA1() {
   # localize var for all function
-  SHARED_LOCAL var B1
+  DEFAULT_LOCAL var B1
 
   # export hello function and localize var1
   EXPORT hello var1
@@ -126,7 +126,7 @@ namespace/module exports three functions, foo(), bar() and baz().
   * Imports specified functions from module with alias.
   * sh_foo(), my_bar(), namespace_baz() functions are defined.
 
-### SHARED_LOCAL <variable-names>...
+### DEFAULT_LOCAL <variable-names>...
 
 localize variable for all function.
 
@@ -167,5 +167,5 @@ Using other module function.
 ### 0.4.0
 
   * Allow to place module under the directory.
-  * Add SHARED_LOCAL function.
+  * Add DEFAULT_LOCAL function.
   * Add prepare callback.

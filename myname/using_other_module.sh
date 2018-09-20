@@ -1,7 +1,7 @@
 #!/bin/sh
 
 myname_using_other_module() {
-  SHARED_LOCAL M
+  DEFAULT_LOCAL M
   EXPORT hello
   DEPENDS myname/mymodule
 }

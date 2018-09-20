@@ -109,10 +109,10 @@ DEPENDS() {
   while [ $# -gt 0 ]; do IMPORT "$1"; shift; done
 }
 
-# Usage: SHARED_LOCAL <variable-names>...
-SHARED_LOCAL() {
+# Usage: DEFAULT_LOCAL <variable-names>...
+DEFAULT_LOCAL() {
   if eval [ "\${${MODULE_NAME}+x}" ]; then
-    echo "ERROR: SHARED_LOCAL can not call after EXPORT" >&2
+    echo "ERROR: DEFAULT_LOCAL can not call after EXPORT" >&2
     exit
   fi
   eval "${MODULE_NAME}_local=\"\${${MODULE_NAME}_local:-} $*\""
