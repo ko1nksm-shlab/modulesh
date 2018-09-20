@@ -1,12 +1,18 @@
 #!/bin/sh
 
 myname_mymodule() {
+  SHARED_LOCAL shared_local_var
   EXPORT foo a b c
   EXPORT bar
   EXPORT baz
   EXPORT change_var local_var
   EXPORT hello
   EXPORT module_info
+  EXPORT shared_local
+}
+
+myname_mymodule_prepare() {
+  shared_local_var=test
 }
 
 _myname_mymodule_foo() {
@@ -34,4 +40,8 @@ _myname_mymodule_hello() {
 
 _myname_mymodule_module_info() {
   echo "$MODULE_SOURCE $MODULE_NAME"
+}
+
+_myname_mymodule_shared_local() {
+  echo $shared_local_var
 }

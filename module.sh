@@ -16,10 +16,11 @@ _PROXY '' '()' local 2>/dev/null || _PROXY 'function ' '' typeset
 _DELEGATE(){
   $3 _ || return 1
   eval "$1"'_DELEGATE'"$2"' {
-    '"$3"' source=$1 name=$2 func=$3 local="'"$3"' IFS" i; shift 3
+    '"$3"' source=$1 name=$2 func=$3 local="'"$3"' " i; shift 3
     [ $# -gt 0 ] && for i in "$@"; do local="$local $i=\"\""; done
     eval "'"$1"'$func'"$2"' {
-      $local MODULE_SOURCE=\"$source\" MODULE_NAME=\"$name\"
+      $local IFS MODULE_SOURCE=\"$source\" MODULE_NAME=\"$name\"
+      \"${name}_prepare\" \"_$func\"
       if [ \$# -gt 0 ]; then _$func \"\$@\"; else _$func; fi
     }"
   }'
@@ -27,6 +28,7 @@ _DELEGATE(){
 _DELEGATE '' '()' local 2>/dev/null || _DELEGATE 'function ' '' typeset
 
 _PROXY IMPORT module modns modname prefix exports func alias defname chunk path
+_PROXY EXPORT vars
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
 _IMPORT() {
@@ -68,6 +70,7 @@ _IMPORT() {
       echo "ERROR: Module '$module' not found" >&2
       exit 1
     fi
+    eval "${MODULE_NAME}_prepare() { :; }"
     # shellcheck disable=SC1090
     . "$MODULE_SOURCE" && $MODULE_NAME
   fi
@@ -93,13 +96,24 @@ _IMPORT() {
 }
 
 # Usage: EXPORT <func> [<variable-names>...]
-EXPORT() {
+_EXPORT() {
+  vars=''
   eval "$MODULE_NAME=\"\${$MODULE_NAME:-} $1\""
+  eval "vars=\"\${${MODULE_NAME}_local:-}\""
   # shellcheck disable=SC2145
-  _DELEGATE "$MODULE_SOURCE" "$MODULE_NAME" "${MODULE_NAME}_$@"
+  _DELEGATE "$MODULE_SOURCE" "$MODULE_NAME" "${MODULE_NAME}_$@" $vars
 }
 
 # Usage: DEPENDS <module>...
 DEPENDS() {
   while [ $# -gt 0 ]; do IMPORT "$1"; shift; done
+}
+
+# Usage: SHARED_LOCAL <variable-names>...
+SHARED_LOCAL() {
+  if eval [ "\${${MODULE_NAME}+x}" ]; then
+    echo "ERROR: SHARED_LOCAL can not call after EXPORT" >&2
+    exit
+  fi
+  eval "${MODULE_NAME}_local=\"\${${MODULE_NAME}_local:-} $*\""
 }

@@ -163,6 +163,13 @@ test_myname_module_info() {
   t [ "$(myname_mymodule_module_info)" = "./myname/mymodule.sh myname_mymodule" ]
 }
 
+test_shared_local() {
+  IMPORT myname/mymodule
+  shared_local_var=''
+  myname_mymodule_shared_local >/dev/null
+  t [ "$shared_local_var" = "" ]
+}
+
 if [ $# -gt 0 ]; then
   main "$@"
 else
