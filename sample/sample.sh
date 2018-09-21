@@ -2,7 +2,8 @@
 
 # This is sample
 
-SH_MODULE_DIR=${0%%/*}
+SCRIPTPATH="$PWD/$0"
+SH_MODULE_DIR=${SCRIPTPATH%/*}/..
 
 # shellcheck disable=SC1090
 . "$SH_MODULE_DIR/module.sh"
