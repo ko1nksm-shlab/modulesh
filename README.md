@@ -134,7 +134,7 @@ localize variable for all function.
 
 Use to export function in module initializer.
 
-`Usage: EXPORT <funcname> [variable-names...]`
+`Usage: EXPORT <funcname>[:<original>] [variable-names...]`
 
 **The scope of specified variable-names and IFS will be local.**
 
@@ -169,3 +169,7 @@ Using other module function.
   * Allow to place module under the directory.
   * Add DEFAULT_LOCAL function.
   * Add prepare callback.
+
+### 0.5.0
+
+  * EXPORT can specify the function name of the original.
