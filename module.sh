@@ -16,12 +16,13 @@ _PROXY '' '()' local 2>/dev/null || _PROXY 'function ' '' typeset
 _DELEGATE(){
   $3 _ || return 1
   eval "$1"'_DELEGATE'"$2"' {
-    '"$3"' source=$1 name=$2 func=$3 local="'"$3"' " i; shift 3
+    '"$3"' source=$1 name=$2 func=${3%%:*} to=${3#*:} local="'"$3"' " i
+    shift 3; [ "$func" = "$to" ] && to=_$to
     [ $# -gt 0 ] && for i in "$@"; do local="$local $i=\"\""; done
     eval "'"$1"'$func'"$2"' {
       $local IFS MODULE_SOURCE=\"$source\" MODULE_NAME=\"$name\"
-      \"${name}_prepare\" \"_$func\"
-      if [ \$# -gt 0 ]; then _$func \"\$@\"; else _$func; fi
+      \"${name}_prepare\" \"$func\"
+      if [ \$# -gt 0 ]; then $to \"\$@\"; else $to; fi
     }"
   }'
 }
@@ -95,10 +96,10 @@ _IMPORT() {
   done
 }
 
-# Usage: EXPORT <func> [<variable-names>...]
+# Usage: EXPORT <func>[:<original>] [<variable-names>...]
 _EXPORT() {
   vars=''
-  eval "$MODULE_NAME=\"\${$MODULE_NAME:-} $1\""
+  eval "$MODULE_NAME=\"\${$MODULE_NAME:-} ${1%%:*}\""
   eval "vars=\"\${${MODULE_NAME}_local:-}\""
   # shellcheck disable=SC2145
   _DELEGATE "$MODULE_SOURCE" "$MODULE_NAME" "${MODULE_NAME}_$@" $vars
