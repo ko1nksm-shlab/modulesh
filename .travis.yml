@@ -43,4 +43,4 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y "$PKG"; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install "$PKG"; fi
   - git clone --depth 1 https://github.com/ko1nksm/shellspec.git
-script: $SH shellspec/shellspec
+script: shellspec/shellspec --shell "$SH"

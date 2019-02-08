@@ -1,24 +1,17 @@
 #!/bin/sh
 
-# Run in all supported shells
-
 # This script is for development purposes.
 # It provide as is, do not any support.
 # It may change without notice.
 
-# Example of use
-#   contrib/all.sh
-#   contrib/all.sh -c shellspec sample/addition_spec.sh
-#   contrib/all.sh -c 'echo ok'
+# Run tests all supported shells
 
 set -eu
-
-[ $# -eq 0 ] && set -- -c shellspec
 
 for shell in dash bash zsh ksh mksh yash posh 'busybox ash'; do
   echo "[$shell]"
   if which "${shell%% *}" > /dev/null; then
-    $shell "$@" &&:
+    shellspec --shell "$shell" "$@" &&:
   else
     echo "Skip, shell not found"
   fi
