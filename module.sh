@@ -28,7 +28,7 @@ _DELEGATE(){
 }
 _DELEGATE '' '()' local 2>/dev/null || _DELEGATE 'function ' '' typeset
 
-_PROXY IMPORT module modns modname prefix exports func alias defname chunk path
+_PROXY IMPORT module modns modname prefix exports func alias defname chunk pathname
 _PROXY EXPORT vars
 
 # Usage: IMPORT <module>[:<prefix>] [<func[:<alias>]>...]
@@ -61,11 +61,11 @@ _IMPORT() {
     fi
     chunk="$SH_MODULE_DIR:" MODULE_SOURCE='' MODULE_NAME="${modns}_${modname}"
     while [ "$chunk" ]; do
-      path=${chunk%%:*} chunk=${chunk#*:}
-      [ "$path" ] || continue
-      path=$path/${module%/*}/$modname
-      [ -f "$path.sh" ] && MODULE_SOURCE="$path.sh" && break
-      [ -f "$path/$modname.sh" ] && MODULE_SOURCE="$path/$modname.sh" && break
+      pathname=${chunk%%:*} chunk=${chunk#*:}
+      [ "$pathname" ] || continue
+      pathname=$pathname/${module%/*}/$modname
+      [ -f "$pathname.sh" ] && MODULE_SOURCE="$pathname.sh" && break
+      [ -f "$pathname/$modname.sh" ] && MODULE_SOURCE="$pathname/$modname.sh" && break
     done
     if [ -z "$MODULE_SOURCE" ]; then
       echo "ERROR: Module '$module' not found" >&2
