@@ -1,0 +1,46 @@
+language: sh
+env:
+  global:
+    - HOMEBREW_NO_AUTO_UPDATE=1
+addons:
+  apt:
+    update: true
+  homebew:
+    update: true
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      env: PKG=dash SH=dash
+    - os: linux
+      dist: xenial
+      env: PKG=bash SH=bash
+    - os: linux
+      dist: xenial
+      env: PKG=zsh SH=zsh
+    - os: linux
+      dist: xenial
+      env: PKG=ksh SH=ksh
+    - os: linux
+      dist: xenial
+      env: PKG=mksh SH=mksh
+    - os: linux
+      dist: xenial
+      env: PKG=yash SH=yash
+    - os: linux
+      dist: xenial
+      env: PKG=posh SH=posh
+    - os: linux
+      dist: xenial
+      env: PKG=busybox SH="busybox ash"
+    - os: osx
+      osx_image: xcode10.1
+      env: PKG=bash SH=bash
+    - os: osx
+      osx_image: xcode10.1
+      env: PKG=zsh SH=zsh
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y "$PKG"; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install "$PKG"; fi
+  - git clone --depth 1 https://github.com/ko1nksm/shellspec.git
+script: $SH shellspec/shellspec
