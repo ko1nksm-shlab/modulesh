@@ -175,3 +175,8 @@ Using other module function.
 ### 0.5.0
 
   * EXPORT can specify the function name of the original.
+
+### 0.5.1
+
+  * Use shellspec for testing.
+  * Fixed for unexpected modify path problem in zsh.
