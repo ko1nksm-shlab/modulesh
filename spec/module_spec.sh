@@ -29,6 +29,32 @@ Describe 'module.sh'
       When call myname_mymodule_baz
       The output should eq "ok: baz 0"
     End
+
+    Describe 'Change variable'
+      Example 'call myname_mymodule_change_var'
+        Set local_var='' global_var=''
+        When call myname_mymodule_change_var
+        The output should be present
+        The variable local_var should eq ""
+        The variable global_var should eq 1
+      End
+    End
+
+    Describe 'myname_module_info'
+      Example 'call myname_using_other_module_hello'
+        When call myname_mymodule_module_info
+        The output should eq "./myname/mymodule.sh myname_mymodule"
+      End
+    End
+
+    Describe 'default_local'
+      Example 'call myname_using_other_module_hello'
+        Set default_local_var=''
+        When call myname_mymodule_default_local
+        The output should be present
+        The variable default_local_var should eq ""
+      End
+    End
   End
 
   Describe 'Imports all functions from module without prefix'
@@ -180,18 +206,6 @@ Describe 'module.sh'
     End
   End
 
-  Describe 'Change variable'
-    Before "IMPORT myname/mymodule"
-
-    Example 'call myname_mymodule_change_var'
-      Set local_var='' global_var=''
-      When call myname_mymodule_change_var
-      The output should be present
-      The variable local_var should eq ""
-      The variable global_var should eq 1
-    End
-  End
-
   Describe 'Using other module'
     Before "IMPORT myname/using_other_module"
 
@@ -207,26 +221,6 @@ Describe 'module.sh'
     Example 'call myname_using_other_module_hello'
       When call myname_sub_foo_hello
       The output should eq "sub foo"
-    End
-  End
-
-  Describe 'myname_module_info'
-    Before "IMPORT myname/mymodule"
-
-    Example 'call myname_using_other_module_hello'
-      When call myname_mymodule_module_info
-      The output should eq "./myname/mymodule.sh myname_mymodule"
-    End
-  End
-
-  Describe 'default_local'
-    Before "IMPORT myname/mymodule"
-
-    Example 'call myname_using_other_module_hello'
-      Set default_local_var=''
-      When call myname_mymodule_default_local
-      The output should be present
-      The variable default_local_var should eq ""
     End
   End
 End
