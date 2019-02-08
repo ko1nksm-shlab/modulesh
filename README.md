@@ -2,6 +2,8 @@
 
 Tiny module system for POSIX compatible shell script.
 
+[![Build Status](https://travis-ci.org/ko1nksm/modulesh.svg?branch=master)](https://travis-ci.org/ko1nksm/modulesh)
+
 Supported shell: `dash`, `bash`, `zsh`, `ksh`, `mksh`, `yash`, `posh`, `busybox (ash)`
 
 ## Using module
