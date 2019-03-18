@@ -31,8 +31,8 @@ Describe 'module.sh'
     End
 
     Describe 'Change variable'
+      Before 'local_var="" global_var=""'
       Example 'call myname_mymodule_change_var'
-        Set local_var='' global_var=''
         When call myname_mymodule_change_var
         The output should be present
         The variable local_var should eq ""
@@ -48,8 +48,8 @@ Describe 'module.sh'
     End
 
     Describe 'default_local'
+      Before 'default_local_var=""'
       Example 'call myname_using_other_module_hello'
-        Set default_local_var=''
         When call myname_mymodule_default_local
         The output should be present
         The variable default_local_var should eq ""
